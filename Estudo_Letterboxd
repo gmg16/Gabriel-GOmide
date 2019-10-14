@@ -1,0 +1,41 @@
+from bs4 import BeautifulSoup
+import requests
+import csv
+import pandas as pd
+
+source = requests.get('https://letterboxd.com/dofsmartins/films/diary/').text
+
+soup = BeautifulSoup(source,'lxml')
+
+
+
+nomes_filmes = []
+notas_filmes = []
+ano_lancamento = []
+
+for filmes in soup.find_all('td', class_='td-film-details'):                        #sempre o elemento comum a todos os elementos
+
+    titulo = filmes.find('h3', class_='headline-3 prettify').a.text                 #sempre pegar referencia da linha em que o elemento que você quer estar
+    nomes_filmes.append(titulo)
+    #print(nomes_filmes)
+
+for estrela in soup.find_all('td', class_='td-rating rating-green'):
+
+    nota = estrela.span.text                            #quando os elementos estão dispostos em classe diferente o jeito é não procurar por classe, encontrar outra coisa em comum
+    notas_filmes.append(nota)
+    #print(notas_filmes)
+
+for ano in soup.find_all('td', class_='td-released center'):
+
+    lancamento = ano.span.text
+    ano_lancamento.append(lancamento)
+    #print(ano_lancamento)
+
+tabela = pd.DataFrame({'Filme': nomes_filmes,             #Colocar em data frame com panda
+                       'Ano': ano_lancamento,
+                      'Nota': notas_filmes})
+print(tabela)
+tabela
+
+tabela.to_csv('tabela.csv')                                 #gerar tabela
+
