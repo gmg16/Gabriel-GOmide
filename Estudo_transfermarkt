@@ -1,0 +1,46 @@
+
+page = "https://www.transfermarkt.co.uk/statistik/einnahmenausgaben?saison_id=2019&saison_id_bis=2019&w_s=s"
+pageTree = requests.get(page, headers=headers)
+soup = BeautifulSoup(pageTree.content, 'html.parser')
+
+# print(soup.prettify())
+
+Times = []
+Gastos = []
+Chegadas = []
+Saidas = []
+Balancos = []
+
+for teste in soup.find_all('div', class_="grid-view"):
+    # print(teste.prettify())
+
+    time = teste.find('td', class_='hauptlink no-border-links').a.text
+    Times.append(time)
+    print(time)
+
+    gasto = teste.find('td', class_='rechts hauptlink redtext').text
+    Gastos.append(gasto)
+    print(gasto)
+
+    chegadas = teste.find_all('td', class_='zentriert')[2].text
+    Chegadas.append(chegadas)
+    print(chegadas)
+
+    saidas = teste.find_all('td', class_='zentriert')[3].text
+    Saidas.append(saidas)
+    print(saidas)
+
+    balanco = teste.find('td', class_='rechts hauptlink').text
+    Balancos.append(balanco)
+    print(balanco)
+
+
+tabela = pd.DataFrame({"Times": Times,
+                       "Gastos": Gastos,
+                       'Chegadas': Chegadas,
+                       'Saidas': Saidas,
+                       'Balancos':Balancos
+
+})
+
+print(tabela)
